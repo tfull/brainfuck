@@ -5,14 +5,14 @@
 
 typedef unsigned char cell_t;
 
-const int TOKEN_PLUS = '+';
-const int TOKEN_MINUS = '-';
-const int TOKEN_NEXT = '>';
-const int TOKEN_PREVIOUS = '<';
-const int TOKEN_OUTPUT = '.';
-const int TOKEN_INPUT = ',';
-const int TOKEN_BEGIN = '[';
-const int TOKEN_END = ']';
+const char TOKEN_PLUS = '+';
+const char TOKEN_MINUS = '-';
+const char TOKEN_NEXT = '>';
+const char TOKEN_PREVIOUS = '<';
+const char TOKEN_OUTPUT = '.';
+const char TOKEN_INPUT = ',';
+const char TOKEN_BEGIN = '[';
+const char TOKEN_END = ']';
 
 class Tape{
     int index;
@@ -116,50 +116,39 @@ public:
 int execute(Tape &tape, Memory &memory, std::istream& input, std::ostream& output){
     while(! tape.eof()){
         char c = tape.read();
-        
-        switch(c){
-        TOKEN_PLUS:
+
+        if(c == TOKEN_PLUS){
             memory.plus();
-            break;
-        TOKEN_MINUS:
+        }else if(c == TOKEN_MINUS){
             memory.minus();
-            break;
-        TOKEN_NEXT:
+        }else if(c == TOKEN_NEXT){
             if(! memory.next()){
                 std::cerr << "index out of bounds" << std::endl;
                 return 1;
             }
-            break;
-        TOKEN_PREVIOUS:
-            if(memory.previous()){
+        }else if(c == TOKEN_PREVIOUS){
+            if(! memory.previous()){
                 std::cerr << "index out of bounds" << std::endl;
                 return 1;
             }
-            break;
-        TOKEN_OUTPUT:
+        }else if(c == TOKEN_OUTPUT){
             output.put(memory.output());
-            break;
-        TOKEN_INPUT:
+        }else if(c == TOKEN_INPUT){
             memory.input(input.get());
-            break;
-        TOKEN_BEGIN:
+        }else if(c == TOKEN_BEGIN){
             if(memory.isZero()){
                 if(! tape.goForward()){
                     std::cerr << "Error: no corresponded ] for [" << std::endl;
                     return 1;
                 }
             }
-            break;
-        TOKEN_END:
+        }else if(c == TOKEN_END){
             if(! memory.isZero()){
                 if(! tape.goBackward()){
                     std::cerr << "Error: no corresponded [ for ]" << std::endl;
                     return 1;
                 }
             }
-            break;
-        default:
-            break;
         }
 
         tape.move();
